@@ -30,7 +30,11 @@ El computador se utiliza como gateway hacia Internet para reutilizar el Arduino 
 | Lógica OpenPLC | ✅ Validada |
 | HMI CODESYS | ✅ Disponible |
 | OpenPLC + Modbus RTU | ✅ Configurado y cargado |
-| Arduino ↔ CODESYS | 🟡 En implementación |
+| CODESYS Modbus Serial Client | ✅ Instalado |
+| Puerto COM / RTU / Unit ID | ✅ Configurado |
+| Canales FC02 y FC01 | ✅ Configurados |
+| Mapeo `EntradasByte` / `SalidasByte` | ✅ Configurado |
+| Validación online Arduino ↔ CODESYS | 🟡 Siguiente paso |
 | Publicación IoT | ⏳ Pendiente |
 | Control desde IoT | ⏳ Pendiente |
 | Validación integral | ⏳ Pendiente |
