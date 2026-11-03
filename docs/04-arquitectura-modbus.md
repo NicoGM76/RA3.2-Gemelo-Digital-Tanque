@@ -4,17 +4,17 @@
 
 ```mermaid
 flowchart LR
-    A[Montaje físico\nB1 B2 B3 / H1-H5] --> B[Arduino UNO\nOpenPLC]
+    A[Montaje físico\nSTART STOP B1 B2 B3\nH1-H5] <--> B[Arduino UNO\nOpenPLC]
     B <-->|Modbus RTU / USB| C[CODESYS\nHMI / Gemelo virtual]
-    C <-->|Gateway local| D[PC]
-    D <-->|Internet| E[Plataforma IoT]
+    B <-->|Modbus RTU / USB| D[Gateway Python\nPC]
+    D <-->|HTTPS| E[Ubidots]
 ```
 
 La solución reutiliza el Arduino UNO existente. El computador actúa como gateway hacia Internet, por lo que no se requiere un ESP32 adicional.
 
 ## OpenPLC + Modbus RTU
 
-Se generó una variante del proyecto denominada `Tanque_V2_Modbus`, conservando la lógica física e incorporando un servidor Modbus RTU.
+Se utilizó una variante del proyecto denominada `Tanque_V2_Modbus`, conservando la lógica física e incorporando comunicación Modbus RTU.
 
 ### Parámetros
 
@@ -35,19 +35,20 @@ Se generó una variante del proyecto denominada `Tanque_V2_Modbus`, conservando 
 | 3 | B2 | `%IX0.3` | D5 |
 | 4 | B3 | `%IX0.4` | D6 |
 
-### Coils - FC01
+### Coils - FC01 / FC05
 
-| Dirección | Variable | IEC | Pin |
-|---:|---|---|---:|
-| 0 | H1 | `%QX0.0` | D8 |
-| 1 | H2 | `%QX0.1` | D9 |
-| 2 | H3 | `%QX0.2` | D10 |
-| 3 | H4 | `%QX0.3` | D11 |
-| 4 | H5 | `%QX0.4` | D12 |
+| Dirección | Variable | IEC | Pin | Uso |
+|---:|---|---|---:|---|
+| 0 | H1 | `%QX0.0` | D8 | Lectura FC01 |
+| 1 | H2 | `%QX0.1` | D9 | Lectura FC01 |
+| 2 | H3 | `%QX0.2` | D10 | Lectura FC01 |
+| 3 | H4 | `%QX0.3` | D11 | Lectura FC01 |
+| 4 | H5 | `%QX0.4` | D12 | Lectura FC01 |
+| 5 | Remoto | `%QX0.5` | D13 | Escritura FC05 |
 
-## Configuración realizada en CODESYS
+## Configuración en CODESYS
 
-Se instaló el complemento **CODESYS Modbus Serial Client SL** y se agregó la cadena de dispositivos Modbus al proyecto existente de CODESYS.
+Se instaló **CODESYS Modbus Serial Client SL** y se agregó la cadena:
 
 ```text
 CODESYS_Control_Win_V3_x64
@@ -58,79 +59,75 @@ CODESYS_Control_Win_V3_x64
 
 ### Puerto serie
 
-El `Modbus_COM_Port` quedó configurado para el Arduino conectado a `COM5`:
-
 - COM Port: `5`
 - Baud rate: `115200`
 - Parity: `None`
 - Data bits: `8`
 - Stop bits: `1`
-
-El cliente utiliza modo **RTU**, tiempo de espera de respuesta de `1000 ms` y un intervalo de `10 ms` entre telegramas.
-
-### Dispositivo remoto
-
-El dispositivo serie Modbus asociado al Arduino utiliza:
-
-- Dirección de servidor / Unit ID: `1`
+- Modo: `RTU`
 - Timeout: `1000 ms`
+- Tiempo entre telegramas: `10 ms`
+- Unit ID: `1`
 
-## Canales Modbus configurados
-
-Se crearon dos canales cíclicos con período de `100 ms`:
+## Canales Modbus
 
 ### `Entradas_Tanque`
 
-- Función: `FC02 - Read Discrete Inputs`
-- Offset: `0`
-- Longitud: `5`
-- Variables: START, STOP, B1, B2 y B3
+- `FC02 - Read Discrete Inputs`
+- Offset `0`
+- Longitud `5`
+- Ciclo `100 ms`
 
 ### `Salidas_Tanque`
 
-- Función: `FC01 - Read Coils`
-- Offset: `0`
-- Longitud: `5`
-- Variables: H1, H2, H3, H4 y H5
+- `FC01 - Read Coils`
+- Offset `0`
+- Longitud `5`
+- Ciclo `100 ms`
 
-CODESYS agrupa cada conjunto de cinco bits dentro de un byte. Se crearon en `TANQUE_ST` las variables `EntradasByte` y `SalidasByte` y se mapearon de esta forma:
+### `Comando_Remoto`
+
+- `FC05 - Write Single Coil`
+- Offset `5`
+- Longitud `1`
+- Ciclo `100 ms`
+
+## Mapeo en CODESYS
 
 ```text
 Entradas_Tanque[0] -> TANQUE_ST.EntradasByte
 Salidas_Tanque[0]  -> TANQUE_ST.SalidasByte
+Comando_Remoto[0]  -> TANQUE_ST.ComandoRemotoByte
 ```
 
-A partir de estos bytes se obtienen las señales individuales `StartFisico`, `StopFisico`, `B1Fisico`, `B2Fisico`, `B3Fisico` y `H1Fisico` a `H5Fisico` mediante acceso por bits.
-
-La lógica de CODESYS fue ampliada para aceptar tanto los controles de la HMI como las señales provenientes del activo físico, conservando la funcionalidad original del gemelo virtual.
+CODESYS agrupa los bits de los canales en bytes. A partir de `EntradasByte` y `SalidasByte` se separan las señales individuales mediante acceso por bit.
 
 ## Validación de compilación
 
-Después de corregir la separación entre la sección de declaraciones y la implementación ST, se ejecutó una recompilación completa del proyecto.
+La recompilación finalizó con:
 
-Resultado:
+- **0 errores**,
+- advertencias C0373 únicamente por ausencia de visualización de arranque predeterminada.
 
-- **0 errores de compilación**.
-- **2 advertencias C0373** relacionadas únicamente con la falta de una visualización de arranque configurada.
-- El proyecto queda **listo para descarga** al runtime de CODESYS.
+Estas advertencias no afectan la lógica ni la comunicación Modbus.
 
-Estas advertencias no afectan la lógica del tanque ni la configuración Modbus y no bloquean la siguiente etapa de validación online.
+## Runtime y diagnóstico
 
-## Validación del runtime local
+Se verificó **CODESYS Control Win V3 x64** en ejecución y el dispositivo local `NICOLASGM` activo.
 
-Se verificó en los servicios de Windows que **CODESYS Control Win V3 x64** se encuentra en ejecución. Posteriormente, desde la configuración de comunicación de CODESYS se confirmó:
+La aplicación fue descargada al runtime y ejecutada en modo RUN. En el diagnóstico Modbus se observó:
 
-- Gateway local activo en `localhost:1217`.
-- Runtime local detectado como `NICOLASGM`.
-- Estado del dispositivo: **activo**.
-- Indicadores del Gateway y del runtime en verde.
+- `Request Counter = 3844`
+- `Error Counter = 0`
 
-Esto confirma que el proyecto ya reconoce correctamente el SoftPLC local y puede pasar a la descarga de la aplicación y a la validación online de las variables Modbus.
+## Validación funcional
 
-## Estado actual
+Se accionaron físicamente START, STOP, B1, B2 y B3 y CODESYS reflejó correctamente los cambios. Las combinaciones de sensores reprodujeron H1-H5 tanto en el montaje como en la HMI.
 
-La configuración estructural de Modbus en CODESYS está completada y validada a nivel de compilación y comunicación con el runtime local: puerto serie, cliente, dispositivo remoto, canales FC01/FC02, mapeo de bytes, lógica ST, Gateway y SoftPLC.
+Por tanto queda validada la cadena:
 
-El siguiente paso es iniciar sesión, descargar la aplicación en el runtime y comprobar que los cambios físicos realizados en el Arduino se reflejen online en `EntradasByte`, `SalidasByte` y las variables individuales del gemelo digital.
+```text
+Activo físico -> Arduino UNO -> Modbus RTU -> CODESYS -> HMI
+```
 
-> Pendiente de validación: intercambio de datos Arduino ↔ CODESYS y captura de variables cambiando en tiempo real.
+El coil 5 / D13 quedó configurado como canal de escritura para la etapa de control remoto e integración IoT.
