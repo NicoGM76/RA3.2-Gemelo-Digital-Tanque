@@ -16,7 +16,16 @@ START se encuentra operativo. STOP continúa pendiente de ajuste físico.
 
 ## Validación Modbus
 
-La prueba pendiente consiste en comprobar que al accionar B1, B2 y B3 en el montaje físico, CODESYS reciba los mismos valores mediante Modbus RTU.
+La aplicación de CODESYS fue descargada al runtime local y ejecutada en modo **RUN**. El dispositivo Modbus serial aparece **En ejecución** dentro de CODESYS.
+
+Durante la validación online se observó el siguiente diagnóstico:
+
+- `Request Counter`: **3844**
+- `Error Counter`: **0**
+
+Este resultado confirma que la capa Modbus está procesando solicitudes sin errores de comunicación en el diagnóstico observado.
+
+La prueba funcional siguiente consiste en accionar B1, B2 y B3 en el montaje físico y comprobar que CODESYS reciba los mismos valores en `EntradasByte`, `B1Fisico`, `B2Fisico`, `B3Fisico` y finalmente en la HMI.
 
 Criterio de éxito:
 
@@ -38,7 +47,7 @@ La etapa final deberá comprobar:
 - fotografía final del montaje,
 - captura del proyecto `Tanque_V2_Modbus`,
 - captura de configuración Modbus en CODESYS,
-- captura online de variables,
+- captura online de variables cambiando,
 - captura del HMI,
 - dashboard IoT,
 - evidencia de control remoto.
