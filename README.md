@@ -44,14 +44,18 @@ El computador se utiliza como gateway hacia Internet para reutilizar el Arduino 
 | Ejecución de aplicación | ✅ RUN |
 | HMI online | ✅ Ejecutándose |
 | Diagnóstico Modbus online | ✅ En ejecución, 3844 solicitudes y 0 errores |
-| Validación funcional Arduino ↔ CODESYS | 🟡 Falta comprobar cambios físicos en variables/HMI |
+| Entrada física Arduino → CODESYS | ✅ Validada con señal física |
+| Validación B1/B2/B3 completa | 🟡 Siguiente paso |
+| Escritura CODESYS → Arduino | ⏳ Pendiente |
 | Publicación IoT | ⏳ Pendiente |
 | Control desde IoT | ⏳ Pendiente |
 | Validación integral | ⏳ Pendiente |
 
 > La compilación actual finaliza con **0 errores**. Permanecen únicamente dos advertencias C0373 relacionadas con la ausencia de una visualización de arranque configurada, las cuales no impiden continuar con las pruebas de comunicación.
 
-> La aplicación ya fue descargada al runtime local y ejecutada en modo **RUN**. La HMI se encuentra online. En el diagnóstico del dispositivo Modbus se registraron **3844 solicitudes con 0 errores**, lo cual confirma que la capa de comunicación está operativa a nivel de diagnóstico. La siguiente prueba es verificar que los cambios del montaje físico se reflejen en `EntradasByte`, las variables físicas y la HMI.
+> La aplicación ya fue descargada al runtime local y ejecutada en modo **RUN**. La HMI se encuentra online. En el diagnóstico del dispositivo Modbus se registraron **3844 solicitudes con 0 errores**.
+
+> Se realizó una prueba funcional con una entrada física del montaje y CODESYS reflejó correctamente el cambio mediante las variables Modbus, validando el flujo **activo físico → Arduino → Modbus RTU → CODESYS**.
 
 ## Documentación
 
