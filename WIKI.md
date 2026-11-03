@@ -122,6 +122,7 @@ La aplicación compila con **0 errores**. Permanecen únicamente advertencias C0
 | Stop bits | 1 |
 | Timeout CODESYS | 1000 ms |
 | Intervalo telegramas | 10 ms |
+| Reinicio automático | Activado para recuperación de comunicación |
 
 ### Canales utilizados
 
@@ -159,10 +160,16 @@ Comando_Remoto[0]  -> TANQUE_ST.ComandoRemotoByte
 
 Se verificó el runtime **CODESYS Control Win V3 x64** y el Gateway local. El dispositivo local `NICOLASGM` fue detectado como activo y la aplicación se descargó correctamente al runtime.
 
-Durante la prueba online del dispositivo Modbus se observó:
+En la validación inicial se observó:
 
 - `Request Counter = 3844`
 - `Error Counter = 0`
+
+En la prueba final realizada el **3 de noviembre de 2026**, después de reiniciar el equipo se verificó nuevamente el puerto `COM5`, los parámetros `115200, 8N1`, Unit ID `1` y el runtime local. Al activar la opción de **comunicación de reinicio automático**, el enlace RTU se recuperó correctamente y el diagnóstico mostró:
+
+- `Request Counter = 143` y aumentando
+- `Error Counter = 0`
+- Estado del servidor Modbus: **En ejecución**
 
 Posteriormente se accionaron físicamente START, STOP, B1, B2 y B3. CODESYS reflejó los cambios en las variables físicas y la HMI reprodujo el mismo estado.
 
@@ -185,7 +192,7 @@ flowchart LR
 | Combinaciones incoherentes → H5 | ✅ Validado |
 | H1-H5 físicas | ✅ Validadas |
 | HMI reflejando el estado físico | ✅ Validado |
-| Diagnóstico Modbus sin errores | ✅ Validado |
+| Diagnóstico Modbus sin errores | ✅ Validado nuevamente el 03/11/2026 |
 
 Con estas pruebas queda validada la cadena:
 
