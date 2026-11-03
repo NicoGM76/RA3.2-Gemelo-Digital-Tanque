@@ -1,8 +1,8 @@
 # 5. Integración IoT
 
-La capa IoT se implementará utilizando el computador como gateway entre CODESYS y la plataforma en Internet.
+La capa IoT se implementa utilizando el computador como gateway entre CODESYS y la plataforma en Internet.
 
-## Flujo previsto
+## Flujo de trabajo
 
 ```text
 Arduino UNO
@@ -11,7 +11,7 @@ CODESYS
    ↕ Gateway local
 PC
    ↕ Internet
-Ubidots / ThingSpeak
+Ubidots
 ```
 
 ## Estado del tanque a publicar
@@ -27,14 +27,43 @@ Se propone codificar el estado general del tanque de la siguiente forma:
 | 4 | Nivel alto |
 | 5 | Error de secuencia |
 
+## Dispositivo IoT creado
+
+Se creó en Ubidots el dispositivo **Tanque_Digital** con seis variables Raw:
+
+- `b1`
+- `b2`
+- `b3`
+- `run`
+- `estado_tanque`
+- `comando_remoto`
+
+## Dashboard
+
+Se creó el dashboard **Gemelo Digital - Tanque**.
+
+Actualmente contiene:
+
+- un widget **Indicator** asociado a `b1`, `b2`, `b3` y `run`,
+- un widget **Switch** asociado a `comando_remoto`.
+
+El dashboard ya está preparado para visualizar el estado del tanque y enviar una orden remota. En este punto aún no se han recibido datos reales desde CODESYS, por lo que los indicadores aparecen sin información disponible.
+
 ## Control remoto
 
-Para demostrar comunicación bidireccional se habilitará al menos una acción de control desde la plataforma IoT. La primera opción de implementación es una orden de **START remoto**.
+La variable `comando_remoto` se utiliza como orden digital de la plataforma IoT:
 
-El objetivo de esta etapa es demostrar que el gemelo no solo visualiza información del activo físico, sino que también puede recibir una orden desde la capa IoT.
+- `0` = OFF
+- `1` = ON
 
-## Plataforma
+El objetivo de la siguiente prueba es enlazar esta variable con `ComandoRemoto` en CODESYS y verificar que el comando llegue finalmente al Arduino mediante Modbus RTU.
 
-La primera opción de trabajo es **Ubidots STEM**. ThingSpeak se mantiene como alternativa si resulta más estable para la entrega.
+## Estado actual
 
-> Estado actual: pendiente de integración después de validar Arduino ↔ CODESYS por Modbus.
+- Dispositivo Ubidots creado: ✅
+- Variables IoT creadas: ✅
+- Dashboard creado: ✅
+- Indicadores B1/B2/B3/RUN: ✅ configurados
+- Switch `comando_remoto`: ✅ configurado
+- Publicación de datos reales desde CODESYS: ⏳ pendiente
+- Orden Ubidots → CODESYS → Arduino: ⏳ pendiente de validación
