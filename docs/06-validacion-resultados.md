@@ -12,7 +12,7 @@ La validación se realiza por etapas para comprobar que cada capa conserve el mi
 | 1 | 1 | 1 | H3 - Nivel alto | ✅ Validado |
 | Combinación incoherente | | | H5 - Error | ✅ Validado |
 
-START se encuentra operativo. STOP continúa pendiente de ajuste físico.
+START se encuentra operativo y, durante la prueba online más reciente, **STOP también respondió correctamente**, por lo que ambos controles físicos quedan funcionales en el montaje actual.
 
 ## Validación Modbus
 
@@ -25,7 +25,15 @@ Durante la validación online se observó el siguiente diagnóstico:
 
 Este resultado confirma que la capa Modbus está procesando solicitudes sin errores de comunicación en el diagnóstico observado.
 
-La prueba funcional siguiente consiste en accionar B1, B2 y B3 en el montaje físico y comprobar que CODESYS reciba los mismos valores en `EntradasByte`, `B1Fisico`, `B2Fisico`, `B3Fisico` y finalmente en la HMI.
+También se realizó una prueba con una entrada física del montaje y CODESYS reflejó correctamente el cambio en las variables asociadas, validando el flujo:
+
+```text
+Activo físico -> Arduino UNO -> Modbus RTU -> CODESYS
+```
+
+Además, el control físico STOP respondió correctamente durante esta etapa.
+
+La siguiente validación consiste en recorrer B1, B2 y B3 de forma individual y combinada para comprobar que `EntradasByte`, `B1Fisico`, `B2Fisico` y `B3Fisico` reproduzcan completamente el estado físico y que la HMI muestre el mismo estado del tanque.
 
 Criterio de éxito:
 
@@ -47,7 +55,7 @@ La etapa final deberá comprobar:
 - fotografía final del montaje,
 - captura del proyecto `Tanque_V2_Modbus`,
 - captura de configuración Modbus en CODESYS,
-- captura online de variables cambiando,
+- captura online de variables B1/B2/B3 cambiando,
 - captura del HMI,
 - dashboard IoT,
 - evidencia de control remoto.
