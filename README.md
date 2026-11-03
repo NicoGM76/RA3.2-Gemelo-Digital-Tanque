@@ -6,11 +6,17 @@ Proyecto individual de **Automatización y Control de Procesos** orientado a ext
 **Actividad:** RA3.2 - Digital Twin - IoT Ecosystem  
 **Fecha de sustentación:** 3 de noviembre de 2026
 
+## Entrega principal
+
+👉 **[Abrir Wiki técnica completa de RA3.2](WIKI.md)**
+
+La wiki reúne la síntesis, arquitectura, activo físico, activo virtual, configuración Modbus, integración IoT, validación, resultados, limitaciones y conclusiones.
+
 ## Objetivo
 
-Integrar el activo físico desarrollado en RA2.3 con su activo virtual en CODESYS mediante **Modbus**, publicar el estado del tanque en una plataforma IoT y habilitar al menos una acción de modificación remota.
+Integrar el activo físico desarrollado en RA2.3 con su activo virtual en CODESYS mediante **Modbus**, preparar la publicación del estado del tanque en una plataforma IoT y habilitar una acción de modificación remota.
 
-## Arquitectura de trabajo
+## Arquitectura
 
 ```mermaid
 flowchart LR
@@ -22,51 +28,29 @@ flowchart LR
 
 El computador se utiliza como gateway hacia Internet para reutilizar el Arduino UNO disponible y evitar requerir hardware adicional. Debido a que el puerto COM5 solo puede ser utilizado por un cliente a la vez, la validación CODESYS y la validación IoT se ejecutan por etapas sobre el mismo activo físico.
 
-## Estado actual
+## Estado resumido
 
 | Fase | Estado |
 |---|---|
-| Activo físico heredado de RA2.3 | ✅ Funcional |
-| Lógica OpenPLC | ✅ Validada |
-| HMI CODESYS | ✅ Disponible |
-| OpenPLC + Modbus RTU | ✅ Configurado y cargado |
-| CODESYS Modbus Serial Client | ✅ Instalado |
-| Puerto COM / RTU / Unit ID | ✅ Configurado |
-| Canales FC02 y FC01 | ✅ Configurados |
-| Mapeo `EntradasByte` / `SalidasByte` | ✅ Configurado |
-| Lógica ST adaptada para señales físicas | ✅ Compila correctamente |
+| Activo físico RA2.3 | ✅ Funcional |
+| OpenPLC | ✅ Validado |
+| HMI CODESYS | ✅ Funcional |
+| Modbus RTU | ✅ Validado |
 | Compilación CODESYS | ✅ 0 errores |
-| Runtime `CODESYS Control Win V3 x64` | ✅ En ejecución |
-| Gateway local CODESYS | ✅ Activo |
-| Dispositivo `NICOLASGM` | ✅ Detectado y activo |
-| Inicio de sesión en runtime | ✅ Exitoso |
-| Aplicación descargada en runtime | ✅ Cargada |
-| Ejecución de aplicación | ✅ RUN |
-| HMI online | ✅ Ejecutándose |
-| Diagnóstico Modbus online | ✅ En ejecución, 3844 solicitudes y 0 errores |
-| START y STOP físicos → CODESYS | ✅ Validados |
-| B1/B2/B3 físicos → CODESYS | ✅ Validados |
-| Respuesta H1-H5 del montaje | ✅ Validada |
-| Cadena físico → Modbus → CODESYS → HMI | ✅ Validada |
-| Coil remoto `%QX0.5` / D13 | ✅ Configurado |
-| Dispositivo `Tanque_Digital` en Ubidots | ✅ Creado |
-| Variables IoT | ✅ Creadas |
-| Dashboard `Gemelo Digital - Tanque` | ✅ Creado |
-| Switch `comando_remoto` | ✅ Configurado |
-| Gateway Python Modbus ↔ Ubidots | ✅ Preparado |
-| Publicación IoT con Arduino conectado | ⏳ Pendiente de prueba final |
-| Control desde IoT | ⏳ Pendiente de validación final |
-| Validación integral | 🟡 En progreso |
+| START / STOP físicos | ✅ Validados |
+| B1 / B2 / B3 físicos | ✅ Validados |
+| H1-H5 | ✅ Validadas |
+| Arduino → Modbus → CODESYS → HMI | ✅ Validado |
+| Coil remoto D13 / `%QX0.5` | ✅ Configurado |
+| Ubidots `Tanque_Digital` | ✅ Creado |
+| Variables y dashboard IoT | ✅ Creados |
+| Gateway Python | ✅ Preparado |
+| Publicación IoT real | ⏳ Pendiente prueba final |
+| Control IoT real | ⏳ Pendiente prueba final |
 
-> La compilación actual finaliza con **0 errores**. Permanecen únicamente dos advertencias C0373 relacionadas con la ausencia de una visualización de arranque configurada, las cuales no impiden continuar con las pruebas de comunicación.
+Durante el diagnóstico online de Modbus se registraron **3844 solicitudes y 0 errores**.
 
-> La aplicación fue descargada al runtime local y ejecutada en modo **RUN**. La HMI se encuentra online. En el diagnóstico del dispositivo Modbus se registraron **3844 solicitudes con 0 errores**.
-
-> Las pruebas físicas confirmaron el funcionamiento de **START, STOP, B1, B2 y B3** a través de Modbus RTU. Las combinaciones de sensores producen correctamente las salidas H1-H5 y el estado se refleja en CODESYS/HMI, validando la cadena **activo físico → Arduino → Modbus RTU → CODESYS → HMI**.
-
-> Para la capa IoT se creó el dispositivo **Tanque_Digital** en Ubidots, sus variables Raw, un dashboard de monitoreo y un switch de control remoto. También se preparó un gateway Python para intercambiar datos entre Modbus RTU y la API HTTPS de Ubidots.
-
-## Documentación
+## Documentación detallada
 
 1. [Síntesis y alcance](docs/01-sintesis.md)
 2. [Activo físico](docs/02-activo-fisico.md)
