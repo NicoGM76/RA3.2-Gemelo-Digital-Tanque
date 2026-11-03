@@ -1,22 +1,34 @@
 # 5. Integración IoT
 
-La capa IoT se implementa utilizando el computador como gateway entre CODESYS y la plataforma en Internet.
+La capa IoT se implementa utilizando el computador como gateway entre el Arduino UNO y Ubidots. El activo virtual en CODESYS ya fue validado por separado mediante Modbus RTU sobre el mismo puerto serial.
 
-## Flujo de trabajo
+## Arquitectura utilizada
 
 ```text
-Arduino UNO
-   ↕ Modbus RTU
-CODESYS
-   ↕ Gateway local
-PC
-   ↕ Internet
-Ubidots
+                 ┌────────────────────┐
+                 │ CODESYS + HMI      │
+                 │ Gemelo virtual     │
+                 └─────────┬──────────┘
+                           │ Modbus RTU
+                           │
+Arduino UNO / OpenPLC ─────┤ COM5
+                           │
+                           │ Modbus RTU
+                 ┌─────────┴──────────┐
+                 │ Gateway Python PC  │
+                 └─────────┬──────────┘
+                           │ HTTPS
+                           ▼
+                        Ubidots
 ```
 
-## Estado del tanque a publicar
+El puerto COM5 es serial y solo puede ser tomado por un cliente a la vez. Por esta razón, la validación del gemelo CODESYS y la validación IoT se ejecutan en etapas separadas sobre el mismo activo físico. Esto evita agregar hardware adicional y permite reutilizar completamente el Arduino UNO disponible.
 
-Se propone codificar el estado general del tanque de la siguiente forma:
+## Estado del tanque publicado
+
+El gateway publica las variables `b1`, `b2`, `b3`, `run` y `estado_tanque`.
+
+La variable `estado_tanque` se codifica así:
 
 | Valor | Estado |
 |---:|---|
@@ -27,7 +39,7 @@ Se propone codificar el estado general del tanque de la siguiente forma:
 | 4 | Nivel alto |
 | 5 | Error de secuencia |
 
-## Dispositivo IoT creado
+## Dispositivo IoT
 
 Se creó en Ubidots el dispositivo **Tanque_Digital** con seis variables Raw:
 
@@ -47,16 +59,29 @@ Actualmente contiene:
 - un widget **Indicator** asociado a `b1`, `b2`, `b3` y `run`,
 - un widget **Switch** asociado a `comando_remoto`.
 
-El dashboard ya está preparado para visualizar el estado del tanque y enviar una orden remota. En este punto aún no se han recibido datos reales desde CODESYS, por lo que los indicadores aparecen sin información disponible.
+El dashboard queda preparado tanto para monitoreo como para control.
+
+## Gateway PC ↔ Ubidots
+
+Se preparó un script en Python que:
+
+1. abre el puerto Modbus RTU del Arduino,
+2. lee las entradas discretas B1, B2 y B3,
+3. lee las salidas H1-H5 para determinar `run` y `estado_tanque`,
+4. publica esos valores en Ubidots mediante HTTPS,
+5. consulta el último valor de `comando_remoto`,
+6. escribe ese valor en el coil 5 de Modbus mediante FC05.
+
+En OpenPLC se reservó `%QX0.5` en el pin D13 con alias **Remoto** para recibir el comando externo.
 
 ## Control remoto
 
-La variable `comando_remoto` se utiliza como orden digital de la plataforma IoT:
+La variable `comando_remoto` trabaja como una orden digital:
 
 - `0` = OFF
 - `1` = ON
 
-El objetivo de la siguiente prueba es enlazar esta variable con `ComandoRemoto` en CODESYS y verificar que el comando llegue finalmente al Arduino mediante Modbus RTU.
+El objetivo de la validación final es utilizar ese coil remoto como una entrada de mando en la lógica OpenPLC, de forma que una orden desde Ubidots produzca una modificación observable en el estado del sistema físico.
 
 ## Estado actual
 
@@ -65,5 +90,7 @@ El objetivo de la siguiente prueba es enlazar esta variable con `ComandoRemoto` 
 - Dashboard creado: ✅
 - Indicadores B1/B2/B3/RUN: ✅ configurados
 - Switch `comando_remoto`: ✅ configurado
-- Publicación de datos reales desde CODESYS: ⏳ pendiente
-- Orden Ubidots → CODESYS → Arduino: ⏳ pendiente de validación
+- Gateway Python Modbus ↔ Ubidots: ✅ preparado
+- D13 / `%QX0.5` reservado para mando remoto: ✅ configurado
+- Publicación de datos reales en Ubidots: ⏳ pendiente de prueba con Arduino conectado
+- Orden Ubidots → Arduino: ⏳ pendiente de validación final
