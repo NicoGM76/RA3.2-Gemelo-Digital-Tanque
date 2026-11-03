@@ -45,33 +45,67 @@ Se generó una variante del proyecto denominada `Tanque_V2_Modbus`, conservando 
 | 3 | H4 | `%QX0.3` | D11 |
 | 4 | H5 | `%QX0.4` | D12 |
 
-## Configuración prevista en CODESYS
+## Configuración realizada en CODESYS
+
+Se instaló el complemento **CODESYS Modbus Serial Client SL** y se agregó la cadena de dispositivos Modbus al proyecto existente de CODESYS.
 
 ```text
-Device
-└── Modbus COM Port
-    └── Modbus Serial Client
-        └── Arduino / Modbus Serial Server
+CODESYS_Control_Win_V3_x64
+└── Modbus_COM_Port
+    └── Modbus_Client_COM_Port
+        └── Modbus_Esclavo_puerto_COM
 ```
 
-Se plantean dos grupos de lectura:
+### Puerto serie
 
-### Grupo 1
+El `Modbus_COM_Port` quedó configurado para el Arduino conectado a `COM5`:
+
+- COM Port: `5`
+- Baud rate: `115200`
+- Parity: `None`
+- Data bits: `8`
+- Stop bits: `1`
+
+El cliente utiliza modo **RTU**, tiempo de espera de respuesta de `1000 ms` y un intervalo de `10 ms` entre telegramas.
+
+### Dispositivo remoto
+
+El dispositivo serie Modbus asociado al Arduino utiliza:
+
+- Dirección de servidor / Unit ID: `1`
+- Timeout: `1000 ms`
+
+## Canales Modbus configurados
+
+Se crearon dos canales cíclicos con período de `100 ms`:
+
+### `Entradas_Tanque`
 
 - Función: `FC02 - Read Discrete Inputs`
 - Offset: `0`
 - Longitud: `5`
-- Variables: START, STOP, B1, B2, B3
+- Variables: START, STOP, B1, B2 y B3
 
-### Grupo 2
+### `Salidas_Tanque`
 
 - Función: `FC01 - Read Coils`
 - Offset: `0`
 - Longitud: `5`
-- Variables: H1, H2, H3, H4, H5
+- Variables: H1, H2, H3, H4 y H5
+
+CODESYS agrupa cada conjunto de cinco bits dentro de un byte. Se crearon en `TANQUE_ST` las variables `EntradasByte` y `SalidasByte` y se mapearon de esta forma:
+
+```text
+Entradas_Tanque[0] -> TANQUE_ST.EntradasByte
+Salidas_Tanque[0]  -> TANQUE_ST.SalidasByte
+```
+
+A partir de estos bytes se obtienen las señales individuales `StartFisico`, `StopFisico`, `B1Fisico`, `B2Fisico`, `B3Fisico` y `H1Fisico` a `H5Fisico` mediante acceso por bits.
+
+La lógica de CODESYS fue ampliada para aceptar tanto los controles de la HMI como las señales provenientes del activo físico, conservando la funcionalidad original del gemelo virtual.
 
 ## Estado actual
 
-La variante Modbus fue cargada en el Arduino y el montaje continuó funcionando. La siguiente fase es completar la configuración de CODESYS y comprobar que las variables cambian desde el activo físico.
+La configuración estructural de Modbus en CODESYS ya está completada: puerto serie, cliente, dispositivo remoto, canales FC01/FC02 y mapeo de bytes. El siguiente paso es compilar el proyecto y validar online que los cambios físicos del Arduino se reflejen correctamente en CODESYS.
 
-> Pendiente: captura del árbol Modbus en CODESYS y validación online.
+> Pendiente de validación: comunicación online Arduino ↔ CODESYS y captura de variables cambiando en tiempo real.
