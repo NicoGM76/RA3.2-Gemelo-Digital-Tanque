@@ -34,10 +34,14 @@ El computador se utiliza como gateway hacia Internet para reutilizar el Arduino 
 | Puerto COM / RTU / Unit ID | ✅ Configurado |
 | Canales FC02 y FC01 | ✅ Configurados |
 | Mapeo `EntradasByte` / `SalidasByte` | ✅ Configurado |
+| Lógica ST adaptada para señales físicas | ✅ Compila correctamente |
+| Compilación CODESYS | ✅ 0 errores |
 | Validación online Arduino ↔ CODESYS | 🟡 Siguiente paso |
 | Publicación IoT | ⏳ Pendiente |
 | Control desde IoT | ⏳ Pendiente |
 | Validación integral | ⏳ Pendiente |
+
+> La compilación actual finaliza con **0 errores**. Permanecen únicamente dos advertencias C0373 relacionadas con la ausencia de una visualización de arranque configurada, las cuales no impiden continuar con las pruebas de comunicación.
 
 ## Documentación
 
