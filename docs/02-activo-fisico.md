@@ -4,23 +4,24 @@ El activo físico corresponde al montaje construido en RA2.3 y reutilizado para 
 
 ## Entradas
 
-| Señal | Pin Arduino | Función |
-|---|---:|---|
-| START | D2 | Inicio del sistema |
-| STOP | D3 | Parada del sistema |
-| B1 | D4 | Nivel inferior |
-| B2 | D5 | Nivel intermedio |
-| B3 | D6 | Nivel superior |
+| Señal | Pin Arduino | Dirección IEC | Función |
+|---|---:|---|---|
+| START | D2 | `%IX0.0` | Inicio del sistema |
+| STOP | D3 | `%IX0.1` | Parada del sistema |
+| B1 | D4 | `%IX0.2` | Nivel inferior |
+| B2 | D5 | `%IX0.3` | Nivel intermedio |
+| B3 | D6 | `%IX0.4` | Nivel superior |
 
 ## Salidas
 
-| Señal | Pin Arduino | Estado |
-|---|---:|---|
-| H1 | D8 | Nivel correcto |
-| H2 | D9 | Nivel bajo |
-| H3 | D10 | Nivel alto |
-| H4 | D11 | Tanque vacío |
-| H5 | D12 | Error de secuencia |
+| Señal | Pin Arduino | Dirección IEC | Estado |
+|---|---:|---|---|
+| H1 | D8 | `%QX0.0` | Nivel correcto |
+| H2 | D9 | `%QX0.1` | Nivel bajo |
+| H3 | D10 | `%QX0.2` | Nivel alto |
+| H4 | D11 | `%QX0.3` | Tanque vacío |
+| H5 | D12 | `%QX0.4` | Error de secuencia |
+| Remoto | D13 | `%QX0.5` | Coil reservado para mando remoto |
 
 ## Tabla funcional
 
@@ -39,6 +40,8 @@ La combinación `000` representa tanque vacío y no se considera una falla.
 
 ## Estado de validación
 
-El montaje fue reconstruido y probado nuevamente. Las entradas B1, B2 y B3 y las salidas H1-H5 responden a la lógica esperada. START se encuentra operativo. STOP continúa pendiente de ajuste físico y será documentado como limitación mientras se completa la integración.
+El montaje fue probado nuevamente durante RA3.2. Las entradas **START, STOP, B1, B2 y B3** respondieron correctamente y las salidas **H1-H5** reprodujeron la tabla funcional esperada.
 
-> Pendiente: agregar fotografía final del montaje y evidencia de las pruebas físicas.
+La señal `Remoto` se reservó en D13 como `%QX0.5` para la etapa de control externo mediante Modbus FC05.
+
+Con estas pruebas el activo físico queda validado como base del gemelo digital.
