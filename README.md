@@ -41,13 +41,16 @@ El computador se utiliza como gateway hacia Internet para reutilizar el Arduino 
 | Dispositivo `NICOLASGM` | ✅ Detectado y activo |
 | Inicio de sesión en runtime | ✅ Exitoso |
 | Aplicación descargada en runtime | ✅ Cargada |
-| Ejecución de aplicación | 🟡 Pendiente de iniciar RUN |
-| Validación online Arduino ↔ CODESYS | 🟡 Pendiente |
+| Ejecución de aplicación | ✅ RUN |
+| HMI online | ✅ Ejecutándose |
+| Validación online Arduino ↔ CODESYS | 🟡 En comprobación |
 | Publicación IoT | ⏳ Pendiente |
 | Control desde IoT | ⏳ Pendiente |
 | Validación integral | ⏳ Pendiente |
 
 > La compilación actual finaliza con **0 errores**. Permanecen únicamente dos advertencias C0373 relacionadas con la ausencia de una visualización de arranque configurada, las cuales no impiden continuar con las pruebas de comunicación.
+
+> La aplicación ya fue descargada al runtime local y ejecutada en modo **RUN**. La HMI se encuentra online y muestra la lógica del tanque. La siguiente prueba es confirmar que los cambios del montaje físico se reciben realmente desde Arduino mediante Modbus RTU.
 
 ## Documentación
 
