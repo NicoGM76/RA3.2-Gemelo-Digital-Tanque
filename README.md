@@ -44,18 +44,20 @@ El computador se utiliza como gateway hacia Internet para reutilizar el Arduino 
 | Ejecución de aplicación | ✅ RUN |
 | HMI online | ✅ Ejecutándose |
 | Diagnóstico Modbus online | ✅ En ejecución, 3844 solicitudes y 0 errores |
-| Entrada física Arduino → CODESYS | ✅ Validada con señal física |
-| Validación B1/B2/B3 completa | 🟡 Siguiente paso |
-| Escritura CODESYS → Arduino | ⏳ Pendiente |
+| START y STOP físicos → CODESYS | ✅ Validados |
+| B1/B2/B3 físicos → CODESYS | ✅ Validados |
+| Respuesta H1-H5 del montaje | ✅ Validada |
+| Cadena físico → Modbus → CODESYS → HMI | ✅ Validada |
+| Escritura CODESYS → Arduino | ⏳ Siguiente paso |
 | Publicación IoT | ⏳ Pendiente |
 | Control desde IoT | ⏳ Pendiente |
-| Validación integral | ⏳ Pendiente |
+| Validación integral | 🟡 En progreso |
 
 > La compilación actual finaliza con **0 errores**. Permanecen únicamente dos advertencias C0373 relacionadas con la ausencia de una visualización de arranque configurada, las cuales no impiden continuar con las pruebas de comunicación.
 
-> La aplicación ya fue descargada al runtime local y ejecutada en modo **RUN**. La HMI se encuentra online. En el diagnóstico del dispositivo Modbus se registraron **3844 solicitudes con 0 errores**.
+> La aplicación fue descargada al runtime local y ejecutada en modo **RUN**. La HMI se encuentra online. En el diagnóstico del dispositivo Modbus se registraron **3844 solicitudes con 0 errores**.
 
-> Se realizó una prueba funcional con una entrada física del montaje y CODESYS reflejó correctamente el cambio mediante las variables Modbus, validando el flujo **activo físico → Arduino → Modbus RTU → CODESYS**.
+> Las pruebas físicas confirmaron el funcionamiento de **START, STOP, B1, B2 y B3** a través de Modbus RTU. Las combinaciones de sensores producen correctamente las salidas H1-H5 y el estado se refleja en CODESYS/HMI, validando la cadena **activo físico → Arduino → Modbus RTU → CODESYS → HMI**.
 
 ## Documentación
 
