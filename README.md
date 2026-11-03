@@ -36,6 +36,9 @@ El computador se utiliza como gateway hacia Internet para reutilizar el Arduino 
 | Mapeo `EntradasByte` / `SalidasByte` | ✅ Configurado |
 | Lógica ST adaptada para señales físicas | ✅ Compila correctamente |
 | Compilación CODESYS | ✅ 0 errores |
+| Runtime `CODESYS Control Win V3 x64` | ✅ En ejecución |
+| Gateway local | ✅ Activo |
+| Dispositivo `NICOLASGM` | ✅ Detectado y activo |
 | Validación online Arduino ↔ CODESYS | 🟡 Siguiente paso |
 | Publicación IoT | ⏳ Pendiente |
 | Control desde IoT | ⏳ Pendiente |
