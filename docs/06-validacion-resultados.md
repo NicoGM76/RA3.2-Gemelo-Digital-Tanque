@@ -1,6 +1,6 @@
 # 6. Validación y resultados
 
-La validación se realiza por etapas para comprobar que cada capa conserve el mismo estado del proceso.
+La validación se realizó por etapas para comprobar que cada capa conservara el mismo estado del proceso.
 
 ## Pruebas funcionales del activo físico
 
@@ -12,52 +12,65 @@ La validación se realiza por etapas para comprobar que cada capa conserve el mi
 | 1 | 1 | 1 | H3 - Nivel alto | ✅ Validado |
 | Combinación incoherente | | | H5 - Error | ✅ Validado |
 
-START se encuentra operativo y, durante la prueba online más reciente, **STOP también respondió correctamente**, por lo que ambos controles físicos quedan funcionales en el montaje actual.
+START y STOP respondieron correctamente durante la prueba online. B1, B2 y B3 también fueron comprobados individualmente y en combinación.
 
 ## Validación Modbus
 
-La aplicación de CODESYS fue descargada al runtime local y ejecutada en modo **RUN**. El dispositivo Modbus serial aparece **En ejecución** dentro de CODESYS.
+La aplicación de CODESYS fue descargada al runtime local y ejecutada en modo **RUN**. El dispositivo Modbus serial apareció **En ejecución**.
 
-Durante la validación online se observó el siguiente diagnóstico:
+Durante la validación online se observó:
 
 - `Request Counter`: **3844**
 - `Error Counter`: **0**
 
-Este resultado confirma que la capa Modbus está procesando solicitudes sin errores de comunicación en el diagnóstico observado.
+También se comprobó que los cambios físicos se reflejaran en `EntradasByte`, `StartFisico`, `StopFisico`, `B1Fisico`, `B2Fisico` y `B3Fisico`.
 
-También se realizó una prueba con una entrada física del montaje y CODESYS reflejó correctamente el cambio en las variables asociadas, validando el flujo:
-
-```text
-Activo físico -> Arduino UNO -> Modbus RTU -> CODESYS
-```
-
-Además, el control físico STOP respondió correctamente durante esta etapa.
-
-La siguiente validación consiste en recorrer B1, B2 y B3 de forma individual y combinada para comprobar que `EntradasByte`, `B1Fisico`, `B2Fisico` y `B3Fisico` reproduzcan completamente el estado físico y que la HMI muestre el mismo estado del tanque.
-
-Criterio de éxito:
+Las salidas H1-H5 respondieron de acuerdo con la tabla funcional y la HMI mostró el mismo estado que el montaje.
 
 ```text
 Montaje físico == Variables Modbus == HMI CODESYS
 ```
 
+Resultado de la cadena principal:
+
+```text
+Activo físico -> Arduino UNO -> Modbus RTU -> CODESYS -> HMI
+```
+
+**Estado: ✅ Validado.**
+
+## Escritura remota preparada
+
+Se agregó el canal `Comando_Remoto` mediante `FC05 - Write Single Coil` sobre el coil 5 y se reservó D13 / `%QX0.5` en OpenPLC con alias `Remoto`.
+
+En CODESYS se añadieron `ComandoRemoto` y `ComandoRemotoByte` y el canal quedó mapeado al byte correspondiente con compilación en 0 errores.
+
 ## Validación IoT
 
-La etapa final deberá comprobar:
+Se preparó en Ubidots:
 
-1. publicación del estado actual del tanque,
-2. actualización del dashboard al cambiar los sensores,
-3. envío de una orden remota,
-4. recepción de dicha orden en el sistema.
+- dispositivo `Tanque_Digital`,
+- variables `b1`, `b2`, `b3`, `run`, `estado_tanque` y `comando_remoto`,
+- dashboard `Gemelo Digital - Tanque`,
+- indicador para B1/B2/B3/RUN,
+- switch para `comando_remoto`.
 
-## Evidencias pendientes
+También se preparó un gateway Python para intercambiar datos entre Modbus RTU y la API de Ubidots.
 
-- fotografía final del montaje,
-- captura del proyecto `Tanque_V2_Modbus`,
-- captura de configuración Modbus en CODESYS,
-- captura online de variables B1/B2/B3 cambiando,
-- captura del HMI,
-- dashboard IoT,
-- evidencia de control remoto.
+### Estado de la prueba IoT
 
-Esta página se actualizará a medida que se complete cada prueba.
+| Prueba | Estado |
+|---|---|
+| Estructura Ubidots creada | ✅ |
+| Variables creadas | ✅ |
+| Dashboard creado | ✅ |
+| Switch remoto configurado | ✅ |
+| Gateway Python preparado | ✅ |
+| Publicación real con Arduino conectado | ⏳ Pendiente de prueba final |
+| Orden Ubidots → Arduino | ⏳ Pendiente de validación final |
+
+Las dos últimas pruebas no se marcan como completadas porque todavía no fueron observadas físicamente con el Arduino conectado al gateway IoT.
+
+## Resultado general
+
+La integración física y el gemelo digital en CODESYS quedaron operativos y validados. La capa IoT quedó implementada a nivel de dispositivo, dashboard, variables, mando remoto y gateway, pendiente únicamente de la prueba final en hardware.
