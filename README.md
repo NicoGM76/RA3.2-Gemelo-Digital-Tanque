@@ -14,13 +14,13 @@ Integrar el activo físico desarrollado en RA2.3 con su activo virtual en CODESY
 
 ```mermaid
 flowchart LR
-    A[Montaje físico\nB1 B2 B3 / H1-H5] --> B[Arduino UNO\nOpenPLC]
+    A[Montaje físico\nB1 B2 B3 / H1-H5] <--> B[Arduino UNO\nOpenPLC]
     B <-->|Modbus RTU / USB| C[CODESYS\nHMI / Gemelo virtual]
-    C <-->|Gateway local| D[PC]
-    D <-->|Internet| E[Plataforma IoT\nUbidots / ThingSpeak]
+    B <-->|Modbus RTU / USB| D[Gateway Python\nPC]
+    D <-->|HTTPS| E[Ubidots\nDashboard IoT]
 ```
 
-El computador se utiliza como gateway hacia Internet para reutilizar el Arduino UNO disponible y evitar requerir hardware adicional.
+El computador se utiliza como gateway hacia Internet para reutilizar el Arduino UNO disponible y evitar requerir hardware adicional. Debido a que el puerto COM5 solo puede ser utilizado por un cliente a la vez, la validación CODESYS y la validación IoT se ejecutan por etapas sobre el mismo activo físico.
 
 ## Estado actual
 
@@ -37,7 +37,7 @@ El computador se utiliza como gateway hacia Internet para reutilizar el Arduino 
 | Lógica ST adaptada para señales físicas | ✅ Compila correctamente |
 | Compilación CODESYS | ✅ 0 errores |
 | Runtime `CODESYS Control Win V3 x64` | ✅ En ejecución |
-| Gateway local | ✅ Activo |
+| Gateway local CODESYS | ✅ Activo |
 | Dispositivo `NICOLASGM` | ✅ Detectado y activo |
 | Inicio de sesión en runtime | ✅ Exitoso |
 | Aplicación descargada en runtime | ✅ Cargada |
@@ -48,9 +48,14 @@ El computador se utiliza como gateway hacia Internet para reutilizar el Arduino 
 | B1/B2/B3 físicos → CODESYS | ✅ Validados |
 | Respuesta H1-H5 del montaje | ✅ Validada |
 | Cadena físico → Modbus → CODESYS → HMI | ✅ Validada |
-| Escritura CODESYS → Arduino | ⏳ Siguiente paso |
-| Publicación IoT | ⏳ Pendiente |
-| Control desde IoT | ⏳ Pendiente |
+| Coil remoto `%QX0.5` / D13 | ✅ Configurado |
+| Dispositivo `Tanque_Digital` en Ubidots | ✅ Creado |
+| Variables IoT | ✅ Creadas |
+| Dashboard `Gemelo Digital - Tanque` | ✅ Creado |
+| Switch `comando_remoto` | ✅ Configurado |
+| Gateway Python Modbus ↔ Ubidots | ✅ Preparado |
+| Publicación IoT con Arduino conectado | ⏳ Pendiente de prueba final |
+| Control desde IoT | ⏳ Pendiente de validación final |
 | Validación integral | 🟡 En progreso |
 
 > La compilación actual finaliza con **0 errores**. Permanecen únicamente dos advertencias C0373 relacionadas con la ausencia de una visualización de arranque configurada, las cuales no impiden continuar con las pruebas de comunicación.
@@ -58,6 +63,8 @@ El computador se utiliza como gateway hacia Internet para reutilizar el Arduino 
 > La aplicación fue descargada al runtime local y ejecutada en modo **RUN**. La HMI se encuentra online. En el diagnóstico del dispositivo Modbus se registraron **3844 solicitudes con 0 errores**.
 
 > Las pruebas físicas confirmaron el funcionamiento de **START, STOP, B1, B2 y B3** a través de Modbus RTU. Las combinaciones de sensores producen correctamente las salidas H1-H5 y el estado se refleja en CODESYS/HMI, validando la cadena **activo físico → Arduino → Modbus RTU → CODESYS → HMI**.
+
+> Para la capa IoT se creó el dispositivo **Tanque_Digital** en Ubidots, sus variables Raw, un dashboard de monitoreo y un switch de control remoto. También se preparó un gateway Python para intercambiar datos entre Modbus RTU y la API HTTPS de Ubidots.
 
 ## Documentación
 
