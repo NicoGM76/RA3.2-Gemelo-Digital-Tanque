@@ -116,10 +116,21 @@ Resultado:
 
 Estas advertencias no afectan la lógica del tanque ni la configuración Modbus y no bloquean la siguiente etapa de validación online.
 
+## Validación del runtime local
+
+Se verificó en los servicios de Windows que **CODESYS Control Win V3 x64** se encuentra en ejecución. Posteriormente, desde la configuración de comunicación de CODESYS se confirmó:
+
+- Gateway local activo en `localhost:1217`.
+- Runtime local detectado como `NICOLASGM`.
+- Estado del dispositivo: **activo**.
+- Indicadores del Gateway y del runtime en verde.
+
+Esto confirma que el proyecto ya reconoce correctamente el SoftPLC local y puede pasar a la descarga de la aplicación y a la validación online de las variables Modbus.
+
 ## Estado actual
 
-La configuración estructural de Modbus en CODESYS ya está completada y validada a nivel de compilación: puerto serie, cliente, dispositivo remoto, canales FC01/FC02, mapeo de bytes y lógica ST asociada.
+La configuración estructural de Modbus en CODESYS está completada y validada a nivel de compilación y comunicación con el runtime local: puerto serie, cliente, dispositivo remoto, canales FC01/FC02, mapeo de bytes, lógica ST, Gateway y SoftPLC.
 
-El siguiente paso es iniciar sesión en el runtime de CODESYS y comprobar que los cambios físicos realizados en el Arduino se reflejen online en `EntradasByte`, `SalidasByte` y las variables individuales del gemelo digital.
+El siguiente paso es iniciar sesión, descargar la aplicación en el runtime y comprobar que los cambios físicos realizados en el Arduino se reflejen online en `EntradasByte`, `SalidasByte` y las variables individuales del gemelo digital.
 
-> Pendiente de validación: comunicación online Arduino ↔ CODESYS y captura de variables cambiando en tiempo real.
+> Pendiente de validación: intercambio de datos Arduino ↔ CODESYS y captura de variables cambiando en tiempo real.
