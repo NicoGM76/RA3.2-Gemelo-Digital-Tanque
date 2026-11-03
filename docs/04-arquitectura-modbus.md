@@ -104,8 +104,22 @@ A partir de estos bytes se obtienen las señales individuales `StartFisico`, `St
 
 La lógica de CODESYS fue ampliada para aceptar tanto los controles de la HMI como las señales provenientes del activo físico, conservando la funcionalidad original del gemelo virtual.
 
+## Validación de compilación
+
+Después de corregir la separación entre la sección de declaraciones y la implementación ST, se ejecutó una recompilación completa del proyecto.
+
+Resultado:
+
+- **0 errores de compilación**.
+- **2 advertencias C0373** relacionadas únicamente con la falta de una visualización de arranque configurada.
+- El proyecto queda **listo para descarga** al runtime de CODESYS.
+
+Estas advertencias no afectan la lógica del tanque ni la configuración Modbus y no bloquean la siguiente etapa de validación online.
+
 ## Estado actual
 
-La configuración estructural de Modbus en CODESYS ya está completada: puerto serie, cliente, dispositivo remoto, canales FC01/FC02 y mapeo de bytes. El siguiente paso es compilar el proyecto y validar online que los cambios físicos del Arduino se reflejen correctamente en CODESYS.
+La configuración estructural de Modbus en CODESYS ya está completada y validada a nivel de compilación: puerto serie, cliente, dispositivo remoto, canales FC01/FC02, mapeo de bytes y lógica ST asociada.
+
+El siguiente paso es iniciar sesión en el runtime de CODESYS y comprobar que los cambios físicos realizados en el Arduino se reflejen online en `EntradasByte`, `SalidasByte` y las variables individuales del gemelo digital.
 
 > Pendiente de validación: comunicación online Arduino ↔ CODESYS y captura de variables cambiando en tiempo real.
