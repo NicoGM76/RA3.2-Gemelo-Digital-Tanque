@@ -39,7 +39,10 @@ El computador se utiliza como gateway hacia Internet para reutilizar el Arduino 
 | Runtime `CODESYS Control Win V3 x64` | ✅ En ejecución |
 | Gateway local | ✅ Activo |
 | Dispositivo `NICOLASGM` | ✅ Detectado y activo |
-| Validación online Arduino ↔ CODESYS | 🟡 Siguiente paso |
+| Inicio de sesión en runtime | ✅ Exitoso |
+| Aplicación descargada en runtime | ✅ Cargada |
+| Ejecución de aplicación | 🟡 Pendiente de iniciar RUN |
+| Validación online Arduino ↔ CODESYS | 🟡 Pendiente |
 | Publicación IoT | ⏳ Pendiente |
 | Control desde IoT | ⏳ Pendiente |
 | Validación integral | ⏳ Pendiente |
