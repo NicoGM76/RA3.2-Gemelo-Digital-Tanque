@@ -43,14 +43,15 @@ El computador se utiliza como gateway hacia Internet para reutilizar el Arduino 
 | Aplicación descargada en runtime | ✅ Cargada |
 | Ejecución de aplicación | ✅ RUN |
 | HMI online | ✅ Ejecutándose |
-| Validación online Arduino ↔ CODESYS | 🟡 En comprobación |
+| Diagnóstico Modbus online | ✅ En ejecución, 3844 solicitudes y 0 errores |
+| Validación funcional Arduino ↔ CODESYS | 🟡 Falta comprobar cambios físicos en variables/HMI |
 | Publicación IoT | ⏳ Pendiente |
 | Control desde IoT | ⏳ Pendiente |
 | Validación integral | ⏳ Pendiente |
 
 > La compilación actual finaliza con **0 errores**. Permanecen únicamente dos advertencias C0373 relacionadas con la ausencia de una visualización de arranque configurada, las cuales no impiden continuar con las pruebas de comunicación.
 
-> La aplicación ya fue descargada al runtime local y ejecutada en modo **RUN**. La HMI se encuentra online y muestra la lógica del tanque. La siguiente prueba es confirmar que los cambios del montaje físico se reciben realmente desde Arduino mediante Modbus RTU.
+> La aplicación ya fue descargada al runtime local y ejecutada en modo **RUN**. La HMI se encuentra online. En el diagnóstico del dispositivo Modbus se registraron **3844 solicitudes con 0 errores**, lo cual confirma que la capa de comunicación está operativa a nivel de diagnóstico. La siguiente prueba es verificar que los cambios del montaje físico se reflejen en `EntradasByte`, las variables físicas y la HMI.
 
 ## Documentación
 
